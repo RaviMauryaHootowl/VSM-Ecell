@@ -96,6 +96,7 @@ async function executeOrder(orderId, quantity, rate, stockIndex, userId, tradeTi
     console.log('executeOrder', orderId, quantity, rate, stockIndex, userId, changeRate, stockQuantityChange);
     try {
         let user = await userModel.findById(userId);
+        console.log("===== user: " + user);
         let funds = Number((user.funds + quantity * rate - assets.getBrokerageFees(rate, quantity)).toFixed(2));
         user.funds = funds;
         user.executedOrders.push({ orderId, quantity, rate, stockIndex, tradeTime });
@@ -166,19 +167,23 @@ async function orderMatcher(stockIndex, userId) {
             someOrderHasExecuted = false;
             try {
                 let orders = await pendingOrdersStorage.getPendingOrdersList();
-                console.log("ordersPool", orders);
+                console.log("ordersPool"); console.log(orders);
                 const matcher = { stockIndex, userId }
+                console.log("172: "); console.log(matcher);
                 for (const param in matcher) {
                     const value = matcher[param];
+                    console.log("175: " + param + ", value: " + value);
                     for (const order1 of orders) {
                         if (order1[param] == value) {
                             let ok;
                             [ok, order1.quantity] = await sufficientFundsAndHoldings(order1.userId, order1.quantity, order1.rate, order1.stockIndex);
+                            console.log(ok + " with " + order1.quantity);
                             if (ok) {
                                 for (const order2 of orders) {
                                     if (order2.rate === order1.rate && order2.stockIndex === order1.stockIndex && order1.userId !== order2.userId) {
                                         if (order1.quantity * order2.quantity < 0) { // one wants to sell and the other is buying
                                             [ok, order2.quantity] = await sufficientFundsAndHoldings(order2.userId, order2.quantity, order2.rate, order2.stockIndex);
+                                            console.log(ok + "  with2  " + order2.quantity);
                                             if (ok) {
                                                 let quantity = Math.min(Math.abs(order1.quantity), Math.abs(order2.quantity));
                                                 ok = await exchangesStorage.usersCanExchange(order1.userId, order2.userId, quantity, true);
@@ -186,9 +191,9 @@ async function orderMatcher(stockIndex, userId) {
                                                     let quantity1 = quantity * Math.sign(order1.quantity);
                                                     let quantity2 = quantity * Math.sign(order2.quantity);
                                                     let tradeTime = Date.now()
-                                                    await executeOrder(order1.orderId, quantity1, order1.rate, stockIndex, order1.userId, tradeTime);
+                                                    await executeOrder(order1.orderId, quantity1, order1.rate, order1.stockIndex, order1.userId, tradeTime);
                                                     await pendingOrdersStorage.pendingOrderExecuted(order1.orderId, quantity1);
-                                                    await executeOrder(order2.orderId, quantity2, order2.rate, stockIndex, order2.userId, tradeTime);
+                                                    await executeOrder(order2.orderId, quantity2, order2.rate, order2.stockIndex, order2.userId, tradeTime);
                                                     await pendingOrdersStorage.pendingOrderExecuted(order2.orderId, quantity2);
                                                     someOrderHasExecuted = true;
                                                 }

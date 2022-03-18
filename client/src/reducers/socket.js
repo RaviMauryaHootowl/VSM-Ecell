@@ -28,7 +28,9 @@ export const connectSocket = (userToken) => {
     return (dispatch) => {
         if (socket === null || !socket.connected) {
             socket = io(constants.WEBSOCKET_DOMAIN);
+            console.log(socket);
             socket.on('connect', () => {
+                console.log("Connected!!!")
                 dispatch(connect());
                 socket.emit(constants.eventNewClient, { userToken });
             });

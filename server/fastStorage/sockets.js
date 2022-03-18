@@ -25,6 +25,7 @@ function getUserSocketId(userId) {
 
 async function setUserSocketId(userId, socketId) {
     try {
+        console.log("Setting user: " + userId + " , to socket: " + socketId);
         await instance.set(SOCKETS_KEY, userId, socketId);
     } catch (error) {
         console.log(error);

@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const Rejson = require('iorejson');
 
 const app = express();
-
+require('dotenv').config()
 // if (process.env.NODE_ENV === 'production') {
 //     const compression = require('compression');
 //     const helmet = require('helmet');
@@ -37,21 +37,28 @@ app.use(
     })
 );
 
-Rejson.defaultOptions = {
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-}
+// Rejson.defaultOptions = {
+//     port: process.env.REDIS_PORT,
+//     host: process.env.REDIS_HOST,
+// }
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server, {
-    handlePreflightRequest: (req, res) => {
-        res.writeHead(200, {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        });
-        res.end();
-    }
+    cors: {
+        origin: "http://localhost:3000",
+        credentials: true,
+        methods: ["GET", "POST"],
+        transports: ['websocket', 'polling'],
+    },
+    allowEIO3: true
+    // handlePreflightRequest: (req, res) => {
+    //     res.writeHead(200, {
+    //         "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    //         "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
+    //         "Access-Control-Allow-Credentials": true
+    //     });
+    //     res.end();
+    // }
 });
 
 
@@ -83,6 +90,9 @@ rejson_subs_client.on('error', function (err) {
 
 app.use('/', require('./routes'));
 
-server.listen(process.env.PORT, process.env.IP, () => {
-    console.log(`Server started on ${process.env.IP} at port ${process.env.PORT}`)
+server.listen(process.env.PORT, () => {
+    console.log(`Server started at port ${process.env.PORT}`)
 });
+// server.listen(process.env.PORT, process.env.IP, () => {
+//     console.log(`Server started on ${process.env.IP} at port ${process.env.PORT}`)
+// });

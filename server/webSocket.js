@@ -24,6 +24,7 @@ function init(io, rejson_client, rejson_subs_client) {
     rejson_subs_client.client.subscribe(constants.internalEventNotifyEveryone);
 
     io.on('connection', function (socket) {
+        console.log("Hey its connected")
         socket.on(constants.eventNewClient, (data) => {
             console.log(constants.eventNewClient, data);
             if (data.userToken) {

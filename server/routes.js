@@ -60,6 +60,7 @@ router.post('/login', (req, res) => {
 
 router.post('/register', (req, res) => {
     const { name, username, password, password2 } = req.body;
+    console.log(req.body);
     if (!name || !username || !password || !password2) {
         res.json({
             ok: false,
@@ -205,6 +206,7 @@ router.post('/getPendingOrders', auth.checkIfAuthenticatedAndGetUserId, (req, re
 
 router.post('/placeOrder', auth.checkIfAuthenticatedAndGetUserId, async (req, res) => {
     const { orderId, quantity, rate, stockIndex, userId } = req.body;
+    console.log(req.body);
     if (!orderId || !quantity || !rate || !stockIndex) {
         if (stockIndex !== 0) {
             return res.json({
