@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('./auth');
-
+const path = require('path');
 const stocks = require('./stocks');
 const assets = require('./assets');
 const stocksStorage = require('./fastStorage/stocks');
@@ -271,5 +271,13 @@ router.post('/cancelOrder', auth.checkIfAuthenticatedAndGetUserId, async (req, r
 });
 
 router.use('/dev', developer);
+
+if(process.env.NODE_ENV=== 'production'){
+    router.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+  
+    router.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
+    })
+}
 
 module.exports = router;
