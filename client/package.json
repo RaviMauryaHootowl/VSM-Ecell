@@ -1,6 +1,5 @@
 {
   "name": "wallstreet-client",
-  "homepage": "https://AliabbasMerchant.github.io/Wallstreet",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
