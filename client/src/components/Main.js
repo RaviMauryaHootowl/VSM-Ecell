@@ -14,6 +14,8 @@ function Main() {
                     <Link className="btn my-3" to="/login">Login</Link>
                     <br />
                     <Link className="btn my-3" to="/register">Register</Link>
+                    <h5>Sponsored by:</h5>
+                    <img style={{height: "70px", marginTop: "8px"}} src="/fyers.png" alt="FYERS" />
                 </div>
             </div>
         </div>

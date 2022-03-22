@@ -3,7 +3,7 @@
 from pprint import pprint
 import json
 
-from config import DEVELOPER_TOKEN, URL
+# from config import DEVELOPER_TOKEN, URL
 from dev_routes import *
 
 def getRates():
